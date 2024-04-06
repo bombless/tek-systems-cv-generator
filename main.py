@@ -1,15 +1,30 @@
+import io
+import os
+
+from configparser import ConfigParser
+
 from docxtpl import DocxTemplate
+
 from jobs.parser import Parser
-import os, io
 
 doc = DocxTemplate("templ-CV.docx")
 
-if not os.path.exists('jobs/jobs.txt'):
-    raise Exception('please fill jobs/jobs.txt')
-jobs_desc = io.open('jobs/jobs.txt', mode="r", encoding="utf-8")
+if not os.path.exists('config/misc.ini'):
+    raise Exception('please fill config/misc.ini')
+ini = ConfigParser()
+ini.read('config/misc.ini', encoding='utf-8')
+misc = ini['misc']
+
+if not os.path.exists('config/jobs.txt'):
+    raise Exception('please fill config/jobs.txt')
+jobs_desc = io.open('config/jobs.txt', mode="r", encoding="utf-8")
 jobs = Parser(jobs_desc.read())
 
-context = {'jobs': []}
+context = {
+    'resource': misc['resource'],
+    'job_title': misc['job_title'],
+    'jobs': []
+}
 while True:
     ok, entry = jobs.parse_item()
     if not ok:
