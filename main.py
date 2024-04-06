@@ -21,10 +21,10 @@ jobs_desc = io.open('config/jobs.txt', mode="r", encoding="utf-8")
 jobs = Parser(jobs_desc.read())
 
 context = {
-    'resource': misc['resource'],
-    'job_title': misc['job_title'],
     'jobs': []
 }
+for k in misc:
+    context[k] = misc[k]
 while True:
     ok, entry = jobs.parse_item()
     if not ok:
