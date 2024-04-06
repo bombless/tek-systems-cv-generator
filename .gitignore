@@ -2,3 +2,4 @@ generated_doc.docx
 .idea
 /jobs/main.py
 /jobs/__pycache__/
+jobs.txt

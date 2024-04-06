@@ -1,6 +1,94 @@
 class Parser:
-    def __init__(self):
-        self.entries = []
+    def __init__(self, input):
+        self.tokens = TokenParser(input)
+        self.buffer = []
+        self.offset = 0
+
+    def next_token(self):
+        if self.offset >= len(self.buffer):
+            self.buffer.append(self.tokens.next())
+        ret = self.buffer[self.offset]
+        self.offset += 1
+        return ret
+
+    def swallow(self, t):
+        if self.buffer[self.offset - 1] != t:
+            raise Exception('wrong value')
+        self.offset -= 1
+
+    def peek(self):
+        t = self.next_token()
+        self.swallow(t)
+        return t
+
+    def save(self):
+        return self.offset
+
+    def load(self, offset):
+        self.offset = offset
+
+    def parse_entry(self):
+        curr = self.next_token()
+        if curr is None:
+            return False, None
+        if curr.is_entry():
+            return True, curr
+        self.swallow(curr)
+        return False, None
+
+    def parse_comma(self):
+        curr = self.next_token()
+        if curr.is_comma():
+            return True, curr
+        self.swallow(curr)
+        return False,
+
+    def parse_left_paren(self):
+        curr = self.next_token()
+        if curr.is_left_paren():
+            return True, curr
+        self.swallow(curr)
+        return False
+
+    def parse_right_paren(self):
+        curr = self.next_token()
+        if curr.is_right_paren():
+            return True, curr
+        self.swallow(curr)
+        return False
+
+    def parse_string(self):
+        curr = self.next_token()
+        if curr.is_string():
+            return True, curr
+        self.swallow(curr)
+        return False,
+
+    def parse_item(self):
+        checkpoint = self.save()
+        ok, _ = self.parse_entry()
+        if not ok:
+            return False, None
+        ok, _ = self.parse_left_paren()
+        if not ok:
+            self.load(checkpoint)
+            return False, None
+
+        content = []
+        while True:
+            p = self.peek()
+            if p.is_right_paren():
+                self.next_token()
+                return True, content
+            if p.is_string():
+                content.append(p.get_content())
+                self.next_token()
+                p = self.peek()
+                if p.is_comma():
+                    self.next_token()
+                elif not p.is_right_paren() and not p.is_string():
+                    self.load(checkpoint)
+                    return False,
 
 
 class Token:
@@ -17,7 +105,7 @@ class Token:
     def is_string(self):
         return self.type == 's'
 
-    def content(self):
+    def get_content(self):
         return self.content
 
     def is_comma(self):
@@ -47,6 +135,9 @@ class Token:
         return Token('e')
 
     def __str__(self):
+        return self.type
+
+    def __repr__(self):
         return self.type
 
 
@@ -107,4 +198,4 @@ class TokenParser:
                 self.advance(advance)
                 return Token.e()
 
-            raise Exception("unknown character " + c + " index " + str(advance) + " input " + self.input)
+            raise Exception("unknown character " + c + " index " + str(advance))
