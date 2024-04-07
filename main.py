@@ -13,7 +13,6 @@ if not os.path.exists('config/misc.ini'):
     raise Exception('please fill config/misc.ini')
 ini = ConfigParser()
 ini.read('config/misc.ini', encoding='utf-8')
-misc = ini['misc']
 
 if not os.path.exists('config/jobs.txt'):
     raise Exception('please fill config/jobs.txt')
@@ -23,8 +22,9 @@ jobs = Parser(jobs_desc.read())
 context = {
     'jobs': []
 }
-for k in misc:
-    context[k] = misc[k]
+for section in ini.sections():
+    for k in ini[section]:
+        context[k] = ini[section][k]
 while True:
     ok, entry = jobs.parse_item()
     if not ok:
