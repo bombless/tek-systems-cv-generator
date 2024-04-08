@@ -63,6 +63,7 @@ while True:
         'report_to': '',
         'subordinates': '',
         'responsibilities': ['foobar'],
+        'technologies': entry[4],
     })
 doc.render(context)
 doc.save("generated_doc.docx")
