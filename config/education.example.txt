@@ -1,0 +1,6 @@
+entry(
+"Bachelor's degree, major in ",
+"XXX University",
+"YYYY.MM – YYYY.MM",
+"Mathematics and Applied Mathematics"
+)

@@ -146,6 +146,8 @@ class TokenParser:
         self.input = input
 
     def peek(self, n=0):
+        if n >= len(self.input):
+            return None
         return self.input[n]
 
     def peek_n(self, n, length):
@@ -170,16 +172,22 @@ class TokenParser:
                     return Token.s(str_content)
                 str_content += c
                 c = self.peek(advance)
+                if c is None:
+                    raise Exception('unexpected EOF in string literal')
                 advance += 1
                 continue
             elif c == '"':
                 in_string_literal = True
                 c = self.peek(advance)
+                if c is None:
+                    raise Exception('unexpected EOF in string literal')
                 advance += 1
                 continue
 
             if c.isspace():
                 c = self.peek(advance)
+                if c is None:
+                    return None
                 advance += 1
                 peek += 1
                 continue

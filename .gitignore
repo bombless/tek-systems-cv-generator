@@ -1,7 +1,8 @@
 generated_doc.docx
 .idea
-/jobs/main.py
-/jobs/__pycache__/
+/parser/main.py
+/parser/__pycache__/
 config/jobs.txt
 config/misc.ini
+config/education.txt
 ~$*
